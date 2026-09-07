@@ -3,10 +3,32 @@
 #API Endpoints
 
 #Login
-http://localhost:5000/api/auth/login
+POST http://localhost:5000/api/auth/login
 
 #Signup
-http://localhost:5000/api/auth/signup
+POST http://localhost:5000/api/auth/signup
 
 #Profile
-http://localhost:5000/api/auth/me
+GET http://localhost:5000/api/auth/me
+
+#GetProducts
+GET http://localhost:5000/api/products
+
+#GetProductbyID
+GET http://localhost:5000/api/products/:id
+
+
+
+
+Prisma
+
+
+npx prisma validate
+
+
+npx prisma migrate dev --name create_users
+
+
+npx prisma migrate dev --name create_users
+
+npx prisma generate

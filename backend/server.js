@@ -4,6 +4,7 @@ import "dotenv/config";
 import prisma from "./config/prisma.js";
 
 import authRoutes from "./routers/authRoutes.js";
+import productRoutes from "./routers/productRoutes.js";
 
 
 const app = express();
@@ -15,6 +16,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use("/api/auth", authRoutes);
+app.use("/api/products", productRoutes);
 
 // Test route
 app.get("/", (req, res) => {
