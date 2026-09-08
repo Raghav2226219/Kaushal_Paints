@@ -3,9 +3,8 @@ import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
 import { getProductById } from "../services/productService";
-import ProductVariantSelector from "../components/products/ProductVariantSelector";
-import ProductQuantitySelector from "../components/products/ProductQuantitySelector";
-import ProductQuoteButton from "../components/products/ProductQuoteButton";
+import ProductDetailsInfo from "../components/products/ProductDetailsInfo";
+import ProductDetailsActions from "../components/products/ProductDetailsActions";
 
 const ProductDetails = () => {
   const { id } = useParams();
@@ -72,31 +71,19 @@ const ProductDetails = () => {
   ← Back to Products
 </button>
 
-      <p>{product.brand}</p>
-
-      <h1>{product.name}</h1>
-
-      <p>{product.category}</p>
+      <ProductDetailsInfo product={product} />
 
       {product.description && (
         <p>{product.description}</p>
       )}
 
-      <ProductVariantSelector
-        variants={product.variants}
-        onSelect={setSelectedVariant}
-      />
-
-      <ProductQuantitySelector
-  value={quantity}
-  onChange={setQuantity}
+<ProductDetailsActions
+  product={product}
+  selectedVariant={selectedVariant}
+  onVariantSelect={setSelectedVariant}
+  quantity={quantity}
+  onQuantityChange={setQuantity}
 />
-
-      <ProductQuoteButton
-        product={product}
-        selectedVariant={selectedVariant}
-        quantity={quantity}
-      />
 
     </main>
   );
