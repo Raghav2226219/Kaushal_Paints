@@ -1,9 +1,12 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import ProductVariantSelector from "./ProductVariantSelector";
 import ProductQuoteButton from "./ProductQuoteButton";
 import ProductQuantitySelector from "./ProductQuantitySelector";
 
 const ProductCard = ({ product }) => {
+  const navigate = useNavigate();
+
   const [selectedVariant, setSelectedVariant] = useState(null);
   const [quantity, setQuantity] = useState(1);
 
@@ -12,7 +15,12 @@ const ProductCard = ({ product }) => {
       <div className="product-card-content">
         <p className="product-brand">{product.brand}</p>
 
-        <h3 className="product-name">{product.name}</h3>
+       <h3
+  className="product-name"
+  onClick={() => navigate(`/products/${product.id}`)}
+>
+  {product.name}
+</h3>
 
         <p className="product-category">{product.category}</p>
 
