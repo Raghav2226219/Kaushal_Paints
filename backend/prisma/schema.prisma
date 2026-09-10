@@ -8,6 +8,14 @@ datasource db {
   provider = "postgresql"
 }
 
+enum QuoteStatus {
+  PENDING
+  SENT_TO_WHATSAPP
+  CONTACTED
+  COMPLETED
+  CANCELLED
+}
+
 model User {
   id           Int      @id @default(autoincrement())
   name         String
@@ -16,6 +24,8 @@ model User {
   phone        String?
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+
+  quotes       Quote[]
 }
 
 model Product {
@@ -29,6 +39,7 @@ model Product {
   updatedAt   DateTime         @updatedAt
 
   variants    ProductVariant[]
+  quoteItems  QuoteItem[]
 }
 
 model ProductVariant {
@@ -39,7 +50,42 @@ model ProductVariant {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  product     Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+  quoteItems  QuoteItem[]
 
   @@unique([productId, size])
+}
+
+model Quote {
+  id        Int         @id @default(autoincrement())
+  userId    Int
+  status    QuoteStatus @default(PENDING)
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items     QuoteItem[]
+
+  @@index([userId])
+  @@index([status])
+}
+
+model QuoteItem {
+  id          Int      @id @default(autoincrement())
+  quoteId     Int
+  productId   Int
+  variantId   Int
+  productName String
+  brand       String
+  size        String
+  quantity    Int
+  createdAt   DateTime @default(now())
+
+  quote       Quote          @relation(fields: [quoteId], references: [id], onDelete: Cascade)
+  product     Product        @relation(fields: [productId], references: [id], onDelete: Restrict)
+  variant     ProductVariant @relation(fields: [variantId], references: [id], onDelete: Restrict)
+
+  @@index([quoteId])
+  @@index([productId])
+  @@index([variantId])
 }

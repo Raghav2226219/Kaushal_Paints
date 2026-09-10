@@ -2,30 +2,38 @@ import jwt from "jsonwebtoken";
 
 export const protect = (req, res, next) => {
   try {
-    const authHeader = req.headers.authorization;
+    let token = req.cookies?.accessToken;
 
-    // Check whether Authorization header exists
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    // Keep Bearer-token support temporarily
+    if (!token) {
+      const authHeader = req.headers.authorization;
+
+      if (authHeader?.startsWith("Bearer ")) {
+        token = authHeader.split(" ")[1];
+      }
+    }
+
+    if (!token) {
       return res.status(401).json({
         message: "Authentication required",
       });
     }
 
-    // Extract token
-    const token = authHeader.split(" ")[1];
+    const decoded = jwt.verify(
+      token,
+      process.env.JWT_SECRET
+    );
 
-    // Verify token
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
-    // Store decoded user information in request
-    req.user = decoded;
+    req.user = {
+      id: decoded.userId,
+    };
 
     next();
   } catch (error) {
-    console.error("Auth middleware error:", error);
+    console.error("Authentication error:", error);
 
     return res.status(401).json({
-      message: "Invalid or expired token",
+      message: "Invalid or expired authentication",
     });
   }
 };

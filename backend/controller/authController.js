@@ -2,10 +2,17 @@ import prisma from "../config/prisma.js";
 import { hashPassword, comparePassword } from "../utils/hash.js";
 import { generateToken } from "../utils/jwt.js";
 
+const COOKIE_OPTIONS = {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === "production",
+  sameSite: "lax",
+  maxAge: 7 * 24 * 60 * 60 * 1000,
+};
+
 export const signup = async (req, res) => {
   try {
     const { name, password, phone } = req.body;
-const email = req.body.email?.trim().toLowerCase();
+    const email = req.body.email?.trim().toLowerCase();
 
     // Basic validation
     if (!name || !email || !password) {
@@ -40,7 +47,16 @@ const email = req.body.email?.trim().toLowerCase();
       },
     });
 
-    // Never send passwordHash to the client
+    // Generate authentication token
+    const token = generateToken(user.id);
+
+    // Store token in HttpOnly cookie
+    res.cookie(
+      "accessToken",
+      token,
+      COOKIE_OPTIONS
+    );
+
     return res.status(201).json({
       message: "User created successfully",
       user: {
@@ -63,7 +79,6 @@ export const login = async (req, res) => {
   try {
     const { password } = req.body;
     const email = req.body.email?.trim().toLowerCase();
-   
 
     // Basic validation
     if (!email || !password) {
@@ -86,8 +101,6 @@ export const login = async (req, res) => {
       });
     }
 
-     const token = generateToken(user.id);
-
     // Compare password with stored hash
     const isPasswordValid = await comparePassword(
       password,
@@ -100,17 +113,25 @@ export const login = async (req, res) => {
       });
     }
 
-    // Login successful
- return res.status(200).json({
-  message: "Login successful",
-  token,
-  user: {
-    id: user.id,
-    name: user.name,
-    email: user.email,
-    phone: user.phone,
-  },
-});
+    // Generate authentication token
+    const token = generateToken(user.id);
+
+    // Store token in HttpOnly cookie
+    res.cookie(
+      "accessToken",
+      token,
+      COOKIE_OPTIONS
+    );
+
+    return res.status(200).json({
+      message: "Login successful",
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        phone: user.phone,
+      },
+    });
   } catch (error) {
     console.error("Login error:", error);
 
@@ -124,7 +145,7 @@ export const getMe = async (req, res) => {
   try {
     const user = await prisma.user.findUnique({
       where: {
-        id: req.user.userId,
+        id: req.user.id,
       },
       select: {
         id: true,
@@ -147,6 +168,26 @@ export const getMe = async (req, res) => {
     });
   } catch (error) {
     console.error("Get user error:", error);
+
+    return res.status(500).json({
+      message: "Internal server error",
+    });
+  }
+};
+
+export const logout = async (req, res) => {
+  try {
+    res.clearCookie("accessToken", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+    });
+
+    return res.status(200).json({
+      message: "Logout successful",
+    });
+  } catch (error) {
+    console.error("Logout error:", error);
 
     return res.status(500).json({
       message: "Internal server error",
