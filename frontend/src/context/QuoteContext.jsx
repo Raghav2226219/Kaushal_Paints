@@ -5,34 +5,65 @@ import {
   useState,
 } from "react";
 
+import { useAuth } from "./AuthContext";
+
 const QuoteContext = createContext(null);
 
-const QUOTE_STORAGE_KEY = "kaushal_paints_quote";
+const QUOTE_STORAGE_PREFIX =
+  "kaushal_paints_quote_";
 
 export const QuoteProvider = ({ children }) => {
-  const [quoteItems, setQuoteItems] = useState(() => {
-    try {
-      const savedQuote = localStorage.getItem(
-        QUOTE_STORAGE_KEY
-      );
+  const { user, loading: authLoading } = useAuth();
 
-      return savedQuote
-        ? JSON.parse(savedQuote)
-        : [];
+  const storageKey = user
+    ? `${QUOTE_STORAGE_PREFIX}${user.id}`
+    : null;
+
+  const [quoteItems, setQuoteItems] = useState([]);
+
+  // Load the quote cart whenever the logged-in user changes.
+  useEffect(() => {
+    if (authLoading) {
+      return;
+    }
+
+    if (!user) {
+      setQuoteItems([]);
+      return;
+    }
+
+    try {
+      const savedQuote =
+        localStorage.getItem(storageKey);
+
+      setQuoteItems(
+        savedQuote
+          ? JSON.parse(savedQuote)
+          : []
+      );
     } catch (error) {
       console.error(
         "Failed to load quote cart:",
         error
       );
 
-      return [];
+      setQuoteItems([]);
     }
-  });
+  }, [user, authLoading, storageKey]);
 
+  // Save the current user's quote cart.
   useEffect(() => {
+    if (
+      authLoading ||
+      !user ||
+      !storageKey
+    ) {
+      return;
+    }
+
     try {
       localStorage.setItem(
-        QUOTE_STORAGE_KEY,
+        storageKey,
         JSON.stringify(quoteItems)
       );
     } catch (error) {
@@ -41,7 +72,12 @@ export const QuoteProvider = ({ children }) => {
         error
       );
     }
-  }, [quoteItems]);
+  }, [
+    quoteItems,
+    user,
+    authLoading,
+    storageKey,
+  ]);
 
   const addToQuote = ({
     product,
@@ -49,11 +85,12 @@ export const QuoteProvider = ({ children }) => {
     quantity = 1,
   }) => {
     setQuoteItems((currentItems) => {
-      const existingItem = currentItems.find(
-        (item) =>
-          item.productId === product.id &&
-          item.variantId === variant.id
-      );
+      const existingItem =
+        currentItems.find(
+          (item) =>
+            item.productId === product.id &&
+            item.variantId === variant.id
+        );
 
       if (existingItem) {
         return currentItems.map((item) =>
@@ -124,24 +161,27 @@ export const QuoteProvider = ({ children }) => {
     setQuoteItems([]);
   };
 
-  const quoteItemCount = quoteItems.reduce(
-  (total, item) => total + item.quantity,
-  0
-);
+  const quoteItemCount =
+    quoteItems.reduce(
+      (total, item) =>
+        total + item.quantity,
+      0
+    );
 
-const quoteLineCount = quoteItems.length;
+  const quoteLineCount =
+    quoteItems.length;
 
   return (
     <QuoteContext.Provider
       value={{
-  quoteItems,
-  quoteItemCount,
-  quoteLineCount,
-  addToQuote,
-  removeFromQuote,
-  updateQuoteQuantity,
-  clearQuote,
-}}
+        quoteItems,
+        quoteItemCount,
+        quoteLineCount,
+        addToQuote,
+        removeFromQuote,
+        updateQuoteQuantity,
+        clearQuote,
+      }}
     >
       {children}
     </QuoteContext.Provider>
@@ -149,7 +189,9 @@ const quoteLineCount = quoteItems.length;
 };
 
 export const useQuote = () => {
-  const context = useContext(QuoteContext);
+  const context = useContext(
+    QuoteContext
+  );
 
   if (!context) {
     throw new Error(
