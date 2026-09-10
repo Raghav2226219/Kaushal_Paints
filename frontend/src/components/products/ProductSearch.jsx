@@ -12,8 +12,11 @@ const ProductSearch = ({ value, onChange }) => {
   }, [searchValue, onChange]);
 
   return (
-    <div className="product-search">
-      <label htmlFor="product-search">
+    <div className="w-full">
+      <label
+        htmlFor="product-search"
+        className="mb-2 block text-sm font-medium text-gray-700"
+      >
         Search Products
       </label>
 
@@ -21,8 +24,11 @@ const ProductSearch = ({ value, onChange }) => {
         id="product-search"
         type="search"
         value={searchValue}
-        onChange={(event) => setSearchValue(event.target.value)}
+        onChange={(event) =>
+          setSearchValue(event.target.value)
+        }
         placeholder="Search by product, brand or category..."
+        className="w-full rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-gray-500 focus:ring-2 focus:ring-gray-200"
       />
     </div>
   );

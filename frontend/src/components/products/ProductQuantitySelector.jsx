@@ -1,4 +1,7 @@
-const ProductQuantitySelector = ({ value = 1, onChange }) => {
+const ProductQuantitySelector = ({
+  value = 1,
+  onChange,
+}) => {
   const updateQuantity = (newQuantity) => {
     const validQuantity = Math.max(1, newQuantity);
 
@@ -16,18 +19,23 @@ const ProductQuantitySelector = ({ value = 1, onChange }) => {
   };
 
   return (
-    <div className="product-quantity-selector">
-      <label htmlFor="product-quantity">
+    <div>
+      <label
+        htmlFor="product-quantity"
+        className="mb-3 block text-sm font-medium text-gray-700"
+      >
         Quantity
       </label>
 
-      <div className="product-quantity-controls">
+      <div className="flex w-fit items-center overflow-hidden rounded-lg border border-gray-300 bg-white">
         <button
           type="button"
           onClick={() => updateQuantity(value - 1)}
           disabled={value <= 1}
+          className="flex h-10 w-10 items-center justify-center text-lg font-medium text-gray-700 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:text-gray-300"
+          aria-label="Decrease quantity"
         >
-          -
+          −
         </button>
 
         <input
@@ -36,11 +44,15 @@ const ProductQuantitySelector = ({ value = 1, onChange }) => {
           min="1"
           value={value}
           onChange={handleInputChange}
+          className="h-10 w-14 border-x border-gray-300 text-center text-sm font-medium text-gray-900 outline-none"
+          aria-label="Quantity"
         />
 
         <button
           type="button"
           onClick={() => updateQuantity(value + 1)}
+          className="flex h-10 w-10 items-center justify-center text-lg font-medium text-gray-700 transition hover:bg-gray-50"
+          aria-label="Increase quantity"
         >
           +
         </button>
