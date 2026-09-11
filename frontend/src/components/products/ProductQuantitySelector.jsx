@@ -3,36 +3,39 @@ const ProductQuantitySelector = ({
   onChange,
 }) => {
   const updateQuantity = (newQuantity) => {
-    const validQuantity = Math.max(1, newQuantity);
+    const numericQuantity = Number(newQuantity);
+
+    if (!Number.isFinite(numericQuantity)) {
+      return;
+    }
+
+    const validQuantity = Math.max(
+      1,
+      Math.floor(numericQuantity)
+    );
 
     onChange?.(validQuantity);
   };
 
   const handleInputChange = (event) => {
-    const newQuantity = Number(event.target.value);
-
-    if (Number.isNaN(newQuantity)) {
-      return;
-    }
-
-    updateQuantity(newQuantity);
+    updateQuantity(event.target.value);
   };
 
   return (
     <div>
       <label
         htmlFor="product-quantity"
-        className="mb-3 block text-sm font-medium text-gray-700"
+        className="mb-3 block text-sm font-semibold text-gray-800"
       >
         Quantity
       </label>
 
-      <div className="flex w-fit items-center overflow-hidden rounded-lg border border-gray-300 bg-white">
+      <div className="flex w-fit items-center overflow-hidden rounded-xl border border-gray-300 bg-white shadow-sm">
         <button
           type="button"
           onClick={() => updateQuantity(value - 1)}
           disabled={value <= 1}
-          className="flex h-10 w-10 items-center justify-center text-lg font-medium text-gray-700 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:text-gray-300"
+          className="flex h-11 w-11 items-center justify-center text-xl font-medium text-gray-700 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:text-gray-300"
           aria-label="Decrease quantity"
         >
           −
@@ -42,16 +45,18 @@ const ProductQuantitySelector = ({
           id="product-quantity"
           type="number"
           min="1"
+          step="1"
+          inputMode="numeric"
           value={value}
           onChange={handleInputChange}
-          className="h-10 w-14 border-x border-gray-300 text-center text-sm font-medium text-gray-900 outline-none"
+          className="h-11 w-16 border-x border-gray-300 bg-white text-center text-sm font-semibold text-gray-900 outline-none focus:bg-gray-50"
           aria-label="Quantity"
         />
 
         <button
           type="button"
           onClick={() => updateQuantity(value + 1)}
-          className="flex h-10 w-10 items-center justify-center text-lg font-medium text-gray-700 transition hover:bg-gray-50"
+          className="flex h-11 w-11 items-center justify-center text-xl font-medium text-gray-700 transition hover:bg-gray-50"
           aria-label="Increase quantity"
         >
           +

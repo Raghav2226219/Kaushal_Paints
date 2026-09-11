@@ -43,6 +43,18 @@ const Products = () => {
     setPage(1);
   };
 
+  const handleClearFilters = () => {
+    setSearch("");
+    setCategory("");
+    setBrand("");
+    setPage(1);
+  };
+
+  const hasActiveFilters =
+    search.trim() !== "" ||
+    category !== "" ||
+    brand !== "";
+
   const handlePreviousPage = () => {
     setPage((currentPage) =>
       Math.max(currentPage - 1, 1)
@@ -95,6 +107,23 @@ const Products = () => {
               onChange={handleBrandChange}
             />
           </div>
+
+          {/* Clear Filters */}
+          {hasActiveFilters && (
+            <div className="mt-4 flex items-center justify-between border-t border-gray-100 pt-4">
+              <p className="text-sm text-gray-500">
+                Filters are currently applied.
+              </p>
+
+              <button
+                type="button"
+                onClick={handleClearFilters}
+                className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 transition hover:border-gray-400 hover:bg-gray-50 hover:text-gray-900"
+              >
+                Clear Filters
+              </button>
+            </div>
+          )}
         </section>
 
         {/* Loading */}
@@ -126,14 +155,44 @@ const Products = () => {
         {/* Products */}
         {!loading && !error && (
           <>
-            <ProductGrid products={products} />
+            {products.length > 0 ? (
+              <>
+                <ProductGrid products={products} />
 
-            <ProductPagination
-              page={pagination.page}
-              totalPages={pagination.totalPages}
-              onPrevious={handlePreviousPage}
-              onNext={handleNextPage}
-            />
+                <ProductPagination
+                  page={pagination.page}
+                  totalPages={pagination.totalPages}
+                  onPrevious={handlePreviousPage}
+                  onNext={handleNextPage}
+                />
+              </>
+            ) : (
+              <div className="rounded-2xl border border-gray-200 bg-white px-6 py-14 text-center shadow-sm">
+                <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-gray-100 text-2xl">
+                  🔍
+                </div>
+
+                <h2 className="mt-5 text-lg font-bold text-gray-900">
+                  No products found
+                </h2>
+
+                <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-gray-500">
+                  We couldn't find any products matching your current
+                  search or filters. Try changing your search or clearing
+                  the filters.
+                </p>
+
+                {hasActiveFilters && (
+                  <button
+                    type="button"
+                    onClick={handleClearFilters}
+                    className="mt-6 rounded-lg bg-gray-900 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-gray-700"
+                  >
+                    Clear Filters
+                  </button>
+                )}
+              </div>
+            )}
           </>
         )}
       </div>
