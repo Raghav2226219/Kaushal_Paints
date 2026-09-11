@@ -15,6 +15,8 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Profile from "./pages/Profile";
 import QuoteHistory from "./pages/QuoteHistory";
+import Services from "./pages/Services";
+import PaintCalculator from "./pages/PaintCalculator";
 
 const AppContent = () => {
   const { isAuthenticated } = useAuth();
@@ -41,8 +43,14 @@ const AppContent = () => {
             <Route path="/products/:id" element={<ProductDetails />} />
 
             <Route path="/quote" element={<QuoteCartPage />} />
+
             <Route path="/quotes" element={<QuoteHistory />} />
+
             <Route path="/profile" element={<Profile />} />
+
+            <Route path="/services" element={<Services />} />
+
+            <Route path="/paint-calculator" element={<PaintCalculator />} />
           </Route>
 
           {/* Temporary auth testing */}
