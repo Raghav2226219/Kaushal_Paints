@@ -17,6 +17,9 @@ import Profile from "./pages/Profile";
 import QuoteHistory from "./pages/QuoteHistory";
 import Services from "./pages/Services";
 import PaintCalculator from "./pages/PaintCalculator";
+import Location from "./pages/Location";
+import Home from "./pages/Home";
+import Footer from "./components/layout/Footer";
 
 const AppContent = () => {
   const { isAuthenticated } = useAuth();
@@ -29,11 +32,13 @@ const AppContent = () => {
         <Routes>
           {/* Public routes */}
 
-          <Route path="/" element={<Products />} />
+          <Route path="/" element={<Home />} />
 
           <Route path="/login" element={<Login />} />
 
           <Route path="/signup" element={<Signup />} />
+
+          <Route path="/location" element={<Location />} />
 
           {/* Protected routes */}
 
@@ -57,6 +62,9 @@ const AppContent = () => {
 
           <Route path="/auth-test" element={<AuthTest />} />
         </Routes>
+      </div>
+      <div className={isAuthenticated ? "md:ml-72" : ""}>
+        <Footer />
       </div>
     </>
   );

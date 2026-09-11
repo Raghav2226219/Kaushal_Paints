@@ -45,6 +45,7 @@ const Header = () => {
         }`}
       >
         <nav className="flex h-16 items-center justify-between px-4 sm:px-6">
+          {/* Brand + Mobile Menu */}
           <div className="flex items-center gap-3">
             {isAuthenticated && (
               <button
@@ -77,6 +78,26 @@ const Header = () => {
             </Link>
           </div>
 
+          {/* Public Navigation */}
+          {!isAuthenticated && (
+            <div className="hidden items-center gap-1 sm:flex">
+              <Link
+                to="/"
+                className="rounded-lg px-3 py-2 text-sm font-medium text-gray-600 transition hover:bg-gray-100 hover:text-gray-900"
+              >
+                Home
+              </Link>
+
+              <Link
+                to="/location"
+                className="rounded-lg px-3 py-2 text-sm font-medium text-gray-600 transition hover:bg-gray-100 hover:text-gray-900"
+              >
+                Location
+              </Link>
+            </div>
+          )}
+
+          {/* Right Side */}
           {isAuthenticated ? (
             <div className="flex items-center gap-3">
               <span className="hidden text-sm font-medium text-gray-600 lg:block">
@@ -106,12 +127,22 @@ const Header = () => {
               </button>
             </div>
           ) : (
-            <Link
-              to="/login"
-              className="rounded-lg bg-gray-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-gray-700"
-            >
-              Login
-            </Link>
+            <div className="flex items-center gap-2">
+              {/* Mobile Location */}
+              <Link
+                to="/location"
+                className="rounded-lg px-3 py-2 text-sm font-medium text-gray-600 transition hover:bg-gray-100 hover:text-gray-900 sm:hidden"
+              >
+                Location
+              </Link>
+
+              <Link
+                to="/login"
+                className="rounded-lg bg-gray-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-gray-700"
+              >
+                Login
+              </Link>
+            </div>
           )}
         </nav>
       </header>
