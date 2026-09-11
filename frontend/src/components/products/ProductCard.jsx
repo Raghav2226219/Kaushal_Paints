@@ -16,7 +16,7 @@ const ProductCard = ({ product }) => {
       className="group relative flex h-full cursor-pointer flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:border-gray-300 hover:shadow-xl"
     >
       {/* Top accent */}
-      <div className="h-1.5 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500" />
+      <div className="h-1.5 bg-linear-to-r from-indigo-500 via-purple-500 to-pink-500" />
 
       <div className="flex flex-1 flex-col p-5 sm:p-6">
         {/* Brand + Category */}
